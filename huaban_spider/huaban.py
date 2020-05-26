@@ -120,7 +120,7 @@ if __name__ == '__main__':
     hh.get_image_pins(max_num=30)
 
     make_dir(hh.board_dir)
-    json.dump(hh.user_info, file(os.path.join(hh.board_dir, hh.user_info['username'] + '.txt'), 'w'))
+    json.dump(hh.user_info, file(os.path.join(hh.board_dir, '___user_info.txt'), 'w'))
 
     print '{} pins in the board ...'.format(len(hh.image_pins))
     hh.download_image()
