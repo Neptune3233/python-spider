@@ -25,7 +25,7 @@ class HuabanCrawler():
 
     def _get_extend_pins(self):
         last_pin_id = self.image_pins[-1]['pin_id']
-        extend_url = '{}?max={}&limit=20&wfl=1'.format(self.basic_url, last_pin_id)
+        extend_url = '{}?max={}&limit=100&wfl=1'.format(self.basic_url, last_pin_id)
         response = requests.get(extend_url, timeout=5)
         board_dict = self._process_data(response)
         for pin in board_dict['pins']:
@@ -48,7 +48,7 @@ class HuabanCrawler():
         resp_home = self._get_home_page()
         board_dict = self._process_data(resp_home)
 
-        self.board_dir = os.path.join(basic_dir, self.user_info['username'] + '_' + self.board_title)
+        self.board_dir = os.path.join(basic_dir, self.board_title + '_' +self.user_info['username'])
         for pin in board_dict['pins']:
             self.image_pins.append(pin)
 
@@ -120,6 +120,7 @@ if __name__ == '__main__':
     hh.get_image_pins(max_num=30)
 
     make_dir(hh.board_dir)
+    hh.user_info['board_id'] = board_id
     json.dump(hh.user_info, file(os.path.join(hh.board_dir, '___user_info.txt'), 'w'))
 
     print '{} pins in the board ...'.format(len(hh.image_pins))
