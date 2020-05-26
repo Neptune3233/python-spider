@@ -2,7 +2,7 @@ import requests
 import re
 import json
 import time
-
+import tkinter
 import os
 
 import multiprocessing
@@ -22,5 +22,5 @@ class Demo():
         print 'All'
 
 if __name__ == '__main__':
-    ll = 'asdfg'
-    print ll[1:-1]
+    a = input('1111---- ')
+
