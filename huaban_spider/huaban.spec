@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['huaban.py'],
-             pathex=['D:\\Codes\\demo\\spider'],
+             pathex=['D:\\Codes\\private\\python-spider\\huaban_spider'],
              binaries=[],
              datas=[],
              hiddenimports=[],
