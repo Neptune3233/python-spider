@@ -134,7 +134,7 @@ class HuabanCrawler():
         self._get_extend_pins()
 
     def download_image(self):
-        pool = multiprocessing.Pool(5)
+        pool = multiprocessing.pool.ThreadPool(4)
         for pin_info in self.image_pins:
             pool.apply_async(download_method, (pin_info, self.board_dir)).get()
         pool.close()

@@ -6,6 +6,9 @@ import multiprocessing
 import urllib
 import configparser
 
+from multiprocessing import Pool
+from multiprocessing.pool import ThreadPool
+
 
 basic_url = 'https://huaban.com/boards/{}/'
 
@@ -48,7 +51,7 @@ class HuabanCrawler():
         resp_home = self._get_home_page()
         board_dict = self._process_data(resp_home)
 
-        self.board_dir = os.path.join(basic_dir, self.board_title + '_' +self.user_info['username'])
+        self.board_dir = os.path.join(basic_dir, self.board_title + '_' + self.user_info['username'])
         for pin in board_dict['pins']:
             self.image_pins.append(pin)
 
@@ -67,7 +70,8 @@ class HuabanCrawler():
             print 'Image {} downloaded!'.format(pin_info['file']['key'])
 
     def download_image(self):
-        pool = multiprocessing.Pool(4)
+        #pool = ThreadPool(4)
+        pool = Pool(20)
         for pin_info in self.image_pins:
             pool.apply_async(download_method, (pin_info, self.board_dir))
         pool.close()
@@ -77,6 +81,21 @@ class HuabanCrawler():
             self.download_method(pin_info)
                     """
         print('All images downloaded.')
+
+    def download_method(self, pin_info, board_dir):
+        pin_type = pin_info['file']['type'].split('/')
+        if pin_type[0] == 'image':
+            if pin_type[1] == 'png' and pin_info['file']['width'] == 658 and pin_info['file']['height'] == 658:
+                print 'Image {} invalid ...'.format(pin_info['file']['key'])
+                return
+            image_url = 'https://hbimg.huabanimg.com/{}'.format(pin_info['file']['key'])
+            file_name = '{}.{}'.format(pin_info['file']['key'], pin_type[1])
+            file_dir = os.path.join(board_dir, file_name)
+            if os.path.exists(file_dir):
+                print 'Image {} existed ...'.format(pin_info['file']['key'])
+                return
+            urllib.urlretrieve(image_url, file_dir)
+            print 'Image {} downloaded ...'.format(pin_info['file']['key'])
 
 
 def download_method(pin_info, board_dir):
@@ -96,7 +115,9 @@ def download_method(pin_info, board_dir):
 
 def make_dir(dir):
     is_exist = os.path.exists(dir)
-    if not is_exist:
+    if is_exist:
+        print 'DIR ' + dir + ' existed ...'
+    else:
         os.makedirs(dir)
 
 def config_parse():
