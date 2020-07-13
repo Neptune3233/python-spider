@@ -22,5 +22,7 @@ class Demo():
         print 'All'
 
 if __name__ == '__main__':
-    a = input('1111---- ')
-
+    a = [x for x in range(10)]
+    b = [x for x in range(1, len(a) + 1)]
+    for aa, bb in zip(a, b):
+        print aa, bb

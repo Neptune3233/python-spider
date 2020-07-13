@@ -70,10 +70,11 @@ class HuabanCrawler():
             print 'Image {} downloaded!'.format(pin_info['file']['key'])
 
     def download_image(self):
-        #pool = ThreadPool(4)
-        pool = Pool(20)
-        for pin_info in self.image_pins:
-            pool.apply_async(download_method, (pin_info, self.board_dir))
+        pool = ThreadPool(5)
+        #pool = Pool(5)
+        pins_length = len(self.image_pins)
+        for pin_info, image_num in zip(self.image_pins, range(1, pins_length + 1)):
+            pool.apply_async(download_method, (pin_info, self.board_dir, '{} / {}'.format(image_num, pins_length)))
         pool.close()
         pool.join()
         """
@@ -98,20 +99,20 @@ class HuabanCrawler():
             print 'Image {} downloaded ...'.format(pin_info['file']['key'])
 
 
-def download_method(pin_info, board_dir):
+def download_method(pin_info, board_dir, image_num):
     pin_type = pin_info['file']['type'].split('/')
     if pin_type[0] == 'image':
         if pin_type[1] == 'png' and pin_info['file']['width'] == 658 and pin_info['file']['height'] == 658:
-            print 'Image {} invalid ...'.format(pin_info['file']['key'])
+            print 'Image {} {} invalid ...'.format(image_num, pin_info['file']['key'])
             return
         image_url = 'https://hbimg.huabanimg.com/{}'.format(pin_info['file']['key'])
         file_name = '{}.{}'.format(pin_info['file']['key'], pin_type[1])
         file_dir = os.path.join(board_dir, file_name)
         if os.path.exists(file_dir):
-            print 'Image {} existed ...'.format(pin_info['file']['key'])
+            print 'Image {} {} existed ...'.format(image_num, pin_info['file']['key'])
             return
         urllib.urlretrieve(image_url, file_dir)
-        print 'Image {} downloaded ...'.format(pin_info['file']['key'])
+        print 'Image {} {} downloaded ...'.format(image_num, pin_info['file']['key'])
 
 def make_dir(dir):
     is_exist = os.path.exists(dir)
