@@ -143,7 +143,7 @@ if __name__ == '__main__':
 
     make_dir(hh.board_dir)
     hh.user_info['board_id'] = board_id
-    json.dump(hh.user_info, file(os.path.join(hh.board_dir, '___user_info.txt'), 'w'))
+    json.dump(hh.user_info, file(os.path.join(hh.board_dir, '___user_info_{}.txt'.format(board_id)), 'w'))
 
     print '{} pins in the board ...'.format(len(hh.image_pins))
     hh.download_image()
